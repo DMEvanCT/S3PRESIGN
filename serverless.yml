@@ -24,26 +24,39 @@ frameworkVersion: '>=1.28.0 <2.0.0'
 provider:
   name: aws
   runtime: go1.x
-
+  region: us-east-2
+  endpointType: Regional
+  apiKeys:
+    - clarity:
+      - apikey1
+  usagePlan:
+    - clarity:
+        quota:
+          limit: 5000
+          offset: 0
+          period: DAY
+        throttle:
+          burstLimit: 200
+          rateLimit: 100
 # you can overwrite defaults here
 #  stage: dev
 #  region: us-east-1
 
 # you can add statements to the Lambda function's IAM Role here
-#  iamRoleStatements:
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:ListBucket"
-#      Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "s3:ListBucket"
+        - "s3:GetObject"
+    #  Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "clarityfgdemo" } ] ]  }
 #    - Effect: "Allow"
 #      Action:
 #        - "s3:PutObject"
-#      Resource:
-#        Fn::Join:
-#          - ""
-#          - - "arn:aws:s3:::"
-#            - "Ref" : "ServerlessDeploymentBucket"
-#            - "/*"
+      Resource:
+        Fn::Join:
+          - ""
+          - - "arn:aws:s3:::clarityfgdemo"
+            - "/*"
 
 # you can define service wide environment variables here
 #  environment:
@@ -62,6 +75,7 @@ functions:
       - http:
           path: /api/v1/s3presign
           method: get
+          private: true 
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
